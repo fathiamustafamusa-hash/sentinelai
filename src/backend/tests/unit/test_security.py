@@ -1,7 +1,7 @@
 """
 Unit tests for security utilities (password hashing + JWT).
 """
-import pytest
+
 from datetime import timedelta
 
 from app.utils.security import (
@@ -78,6 +78,7 @@ class TestJWT:
     def test_decode_token_with_wrong_secret(self):
         """Tokens signed with different keys must fail."""
         from jose import jwt
+
         bad_token = jwt.encode({"sub": "x"}, "wrong-secret", algorithm="HS256")
         assert decode_access_token(bad_token) is None
 

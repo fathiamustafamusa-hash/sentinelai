@@ -1,6 +1,7 @@
 """
 Unit tests for IOC extractor.
 """
+
 from app.services.ioc_extractor import (
     extract_iocs,
     extract_flat_iocs,

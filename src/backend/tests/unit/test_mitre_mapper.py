@@ -1,6 +1,7 @@
 """
 Unit tests for MITRE ATT&CK mapper.
 """
+
 from app.services.mitre_mapper import (
     map_to_mitre,
     get_technique_info,
@@ -92,7 +93,9 @@ class TestCombined:
         assert result == []
 
     def test_raw_data_searched(self):
-        result = map_to_mitre(raw_data='{"command": "mimikatz sekurlsa::logonpasswords"}')
+        result = map_to_mitre(
+            raw_data='{"command": "mimikatz sekurlsa::logonpasswords"}'
+        )
         assert "T1003" in result
 
 

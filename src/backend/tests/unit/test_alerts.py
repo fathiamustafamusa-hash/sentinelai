@@ -37,7 +37,9 @@ class TestCreateAlert:
         response = client.post("/api/alerts/", json=sample_alert_data)
         assert response.status_code == 401
 
-    def test_create_alert_invalid_severity(self, client, auth_headers, sample_alert_data):
+    def test_create_alert_invalid_severity(
+        self, client, auth_headers, sample_alert_data
+    ):
         bad = {**sample_alert_data, "severity": "super-critical"}
         response = client.post("/api/alerts/", json=bad, headers=auth_headers)
         assert response.status_code == 422
@@ -79,9 +81,7 @@ class TestListAlerts:
             headers=auth_headers,
         )
 
-        response = client.get(
-            "/api/alerts/?severity=high", headers=auth_headers
-        )
+        response = client.get("/api/alerts/?severity=high", headers=auth_headers)
         assert response.status_code == 200
         assert len(response.json()) == 1
         assert response.json()[0]["severity"] == "high"
@@ -123,7 +123,9 @@ class TestUpdateAlert:
         assert response.status_code == 200
         assert response.json()["status"] == "investigating"
 
-    def test_update_to_resolved_sets_resolved_at(self, client, auth_headers, sample_alert_data):
+    def test_update_to_resolved_sets_resolved_at(
+        self, client, auth_headers, sample_alert_data
+    ):
         created = client.post(
             "/api/alerts/", json=sample_alert_data, headers=auth_headers
         ).json()
@@ -139,24 +141,22 @@ class TestUpdateAlert:
 
 
 class TestDeleteAlert:
-    def test_delete_as_admin(self, client, admin_headers, auth_headers, sample_alert_data):
+    def test_delete_as_admin(
+        self, client, admin_headers, auth_headers, sample_alert_data
+    ):
         # Analyst creates alert
         created = client.post(
             "/api/alerts/", json=sample_alert_data, headers=auth_headers
         ).json()
         # Admin deletes
-        response = client.delete(
-            f"/api/alerts/{created['id']}", headers=admin_headers
-        )
+        response = client.delete(f"/api/alerts/{created['id']}", headers=admin_headers)
         assert response.status_code == 204
 
     def test_delete_as_analyst_forbidden(self, client, auth_headers, sample_alert_data):
         created = client.post(
             "/api/alerts/", json=sample_alert_data, headers=auth_headers
         ).json()
-        response = client.delete(
-            f"/api/alerts/{created['id']}", headers=auth_headers
-        )
+        response = client.delete(f"/api/alerts/{created['id']}", headers=auth_headers)
         assert response.status_code == 403
 
 

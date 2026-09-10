@@ -1,8 +1,8 @@
 """
 Unit tests for alert_service business logic.
 """
+
 import pytest
-from datetime import datetime, timezone
 
 from app.services import alert_service
 from app.schemas import AlertCreate, AlertUpdate, AlertSeverity, AlertStatus
@@ -76,9 +76,7 @@ class TestUpdateAlert:
         assert updated.resolved_at is not None
 
     def test_update_nonexistent(self, db_session):
-        result = alert_service.update_alert(
-            db_session, 99999, AlertUpdate(title="XXX")
-        )
+        result = alert_service.update_alert(db_session, 99999, AlertUpdate(title="XXX"))
         assert result is None
 
 

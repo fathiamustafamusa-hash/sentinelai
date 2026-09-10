@@ -1,6 +1,7 @@
 """
 Centralized configuration loaded from environment variables.
 """
+
 import os
 from dotenv import load_dotenv
 
@@ -31,7 +32,9 @@ class Settings:
     # ============ JWT ============
     SECRET_KEY: str = os.getenv("SECRET_KEY", "change-me-in-production")
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
+        os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
+    )
 
     # ============ URLs (computed) ============
     @property
@@ -54,7 +57,9 @@ class Settings:
     def redis_url(self) -> str:
         """Redis connection URL."""
         if self.REDIS_PASSWORD:
-            return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+            return (
+                f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+            )
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
 

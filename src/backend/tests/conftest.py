@@ -3,6 +3,7 @@ Pytest fixtures for SentinelAI backend tests.
 
 Uses SQLite in-memory database for fast, isolated tests.
 """
+
 import os
 
 # Set test environment BEFORE importing app
@@ -87,6 +88,7 @@ def client(db_session):
     Lifespan is NOT triggered (no context manager) to avoid Redis/Postgres
     connections during tests.
     """
+
     def override_get_db():
         try:
             yield db_session

@@ -1,6 +1,7 @@
 """
 User model for authentication and authorization.
 """
+
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
 import enum
@@ -24,7 +25,9 @@ class User(Base):
     full_name = Column(String(100), nullable=True)
     role = Column(String(20), default=UserRole.ANALYST.value, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
     def __repr__(self):

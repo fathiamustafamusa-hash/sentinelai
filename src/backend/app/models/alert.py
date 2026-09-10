@@ -4,6 +4,7 @@ Note: severity and status are stored as String (not Enum) to avoid
 PostgreSQL ENUM migration complexities. Validation happens at the
 Pydantic schema level.
 """
+
 from sqlalchemy import Column, Integer, String, Text, DateTime, JSON
 from sqlalchemy.sql import func
 
@@ -29,7 +30,9 @@ class Alert(Base):
     iocs = Column(JSON, nullable=True)
 
     assigned_to = Column(Integer, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
+    )
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
     resolved_at = Column(DateTime(timezone=True), nullable=True)
 

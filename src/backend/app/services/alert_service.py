@@ -1,6 +1,7 @@
 """
 Alert service: business logic for CRUD, filtering, and statistics.
 """
+
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
@@ -58,12 +59,7 @@ def list_alerts(
     if assigned_to is not None:
         query = query.filter(Alert.assigned_to == assigned_to)
 
-    return (
-        query.order_by(desc(Alert.created_at))
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
+    return query.order_by(desc(Alert.created_at)).offset(skip).limit(limit).all()
 
 
 def count_alerts(
@@ -102,6 +98,7 @@ def update_alert(
     # Auto-set resolved_at when status becomes resolved
     if update_data.get("status") == "resolved":
         from datetime import datetime, timezone
+
         db_alert.resolved_at = datetime.now(timezone.utc)
 
     db.commit()
@@ -149,17 +146,13 @@ def get_stats(db: Session) -> dict:
 
     # By severity
     severity_rows = (
-        db.query(Alert.severity, func.count(Alert.id))
-        .group_by(Alert.severity)
-        .all()
+        db.query(Alert.severity, func.count(Alert.id)).group_by(Alert.severity).all()
     )
     by_severity = {row[0]: row[1] for row in severity_rows}
 
     # By status
     status_rows = (
-        db.query(Alert.status, func.count(Alert.id))
-        .group_by(Alert.status)
-        .all()
+        db.query(Alert.status, func.count(Alert.id)).group_by(Alert.status).all()
     )
     by_status = {row[0]: row[1] for row in status_rows}
 
@@ -175,10 +168,7 @@ def get_stats(db: Session) -> dict:
 
     # Unassigned count
     unassigned = (
-        db.query(func.count(Alert.id))
-        .filter(Alert.assigned_to.is_(None))
-        .scalar()
-        or 0
+        db.query(func.count(Alert.id)).filter(Alert.assigned_to.is_(None)).scalar() or 0
     )
 
     return {

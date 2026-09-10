@@ -1,6 +1,7 @@
 """
 Unit tests for Celery task logic (pure functions).
 """
+
 import pytest
 
 from app.tasks.alert_tasks import _analyze_with_ai, _compute_risk_score

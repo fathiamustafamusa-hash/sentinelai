@@ -1,6 +1,7 @@
 """
 Alert routes: CRUD operations with RBAC.
 """
+
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
@@ -53,9 +54,9 @@ def get_alert_stats(
 def create_alert(
     alert_data: AlertCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(
-        UserRole.ADMIN.value, UserRole.ANALYST.value
-    )),
+    current_user: User = Depends(
+        require_role(UserRole.ADMIN.value, UserRole.ANALYST.value)
+    ),
 ):
     """
     Create a new alert.
@@ -132,9 +133,9 @@ def update_alert(
     alert_id: int,
     alert_data: AlertUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(
-        UserRole.ADMIN.value, UserRole.ANALYST.value
-    )),
+    current_user: User = Depends(
+        require_role(UserRole.ADMIN.value, UserRole.ANALYST.value)
+    ),
 ):
     """
     Update an alert (partial update).
@@ -161,9 +162,9 @@ def assign_alert(
     alert_id: int,
     user_id: int = Query(..., description="ID of the user to assign the alert to"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(
-        UserRole.ADMIN.value, UserRole.ANALYST.value
-    )),
+    current_user: User = Depends(
+        require_role(UserRole.ADMIN.value, UserRole.ANALYST.value)
+    ),
 ):
     """
     Assign an alert to a user.
@@ -215,9 +216,9 @@ def delete_alert(
 def analyze_alert(
     alert_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_role(
-        UserRole.ADMIN.value, UserRole.ANALYST.value
-    )),
+    current_user: User = Depends(
+        require_role(UserRole.ADMIN.value, UserRole.ANALYST.value)
+    ),
 ):
     """
     Queue an AI analysis task for the given alert.
@@ -235,6 +236,7 @@ def analyze_alert(
 
     # Import here to avoid circular imports
     from app.tasks.alert_tasks import analyze_alert_ai
+
     task = analyze_alert_ai.delay(alert_id)
 
     return {

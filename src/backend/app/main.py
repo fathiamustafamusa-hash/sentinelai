@@ -1,6 +1,7 @@
 """
 SentinelAI SOC API - Main FastAPI application.
 """
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, status
@@ -19,7 +20,9 @@ from app.routers import auth, alerts, tasks
 
 
 # ============ Redis client ============
-redis_client: aioredis.Redis = None
+from typing import Optional
+
+redis_client: Optional[aioredis.Redis] = None
 
 
 @asynccontextmanager
@@ -54,7 +57,8 @@ async def lifespan(app: FastAPI):
 
     # ---- Shutdown ----
     print("🛑 Shutting down...")
-    await redis_client.close()
+    if redis_client is not None:
+        await redis_client.close()
     await async_engine.dispose()
     print("🛑 Connections closed")
 
@@ -85,12 +89,15 @@ async def health_check():
         db_status = f"down: {type(e).__name__}"
 
     try:
-        await redis_client.ping()
-        redis_status = "up"
+        if redis_client is None:
+            redis_status = "down: not_initialized"
+        else:
+            await redis_client.ping()
+            redis_status = "up"
     except Exception as e:
         redis_status = f"down: {type(e).__name__}"
 
-    all_up = (db_status == "up" and redis_status == "up")
+    all_up = db_status == "up" and redis_status == "up"
     status_code = status.HTTP_200_OK if all_up else status.HTTP_503_SERVICE_UNAVAILABLE
 
     return JSONResponse(

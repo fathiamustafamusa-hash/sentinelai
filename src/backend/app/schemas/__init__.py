@@ -1,6 +1,7 @@
 """
 Schemas package: export all schemas for easy import.
 """
+
 from app.schemas.user import (
     UserCreate,
     UserLogin,

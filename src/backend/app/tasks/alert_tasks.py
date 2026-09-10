@@ -2,6 +2,7 @@
 Celery tasks for alert processing and AI analysis.
 Tasks are explicitly bound to `celery_app` (configured with Redis broker).
 """
+
 import logging
 from datetime import datetime, timezone
 
@@ -35,6 +36,7 @@ def _build_alert_text(alert: Alert) -> str:
     if alert.raw_data:
         try:
             import json
+
             parts.append(json.dumps(alert.raw_data, ensure_ascii=False))
         except Exception:
             parts.append(str(alert.raw_data))

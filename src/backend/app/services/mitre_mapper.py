@@ -6,6 +6,7 @@ techniques. Uses a keyword-based approach for simplicity and auditability.
 
 Reference: https://attack.mitre.org/techniques/enterprise/
 """
+
 from typing import Dict, List, Set
 
 
@@ -15,114 +16,187 @@ TECHNIQUE_CATALOG: Dict[str, Dict] = {
     "T1110": {
         "name": "Brute Force",
         "keywords": [
-            "brute force", "bruteforce", "failed login", "failed password",
-            "authentication failure", "invalid user", "repeated login",
-            "password spray", "credential stuffing",
+            "brute force",
+            "bruteforce",
+            "failed login",
+            "failed password",
+            "authentication failure",
+            "invalid user",
+            "repeated login",
+            "password spray",
+            "credential stuffing",
         ],
     },
     "T1078": {
         "name": "Valid Accounts",
         "keywords": [
-            "valid account", "compromised account", "suspicious login",
-            "anomalous login", "impossible travel", "unusual sign-in",
+            "valid account",
+            "compromised account",
+            "suspicious login",
+            "anomalous login",
+            "impossible travel",
+            "unusual sign-in",
         ],
     },
     "T1059": {
         "name": "Command and Scripting Interpreter",
         "keywords": [
-            "powershell", "cmd.exe", "bash script", "python script",
-            "wscript", "cscript", "command execution", "shell script",
+            "powershell",
+            "cmd.exe",
+            "bash script",
+            "python script",
+            "wscript",
+            "cscript",
+            "command execution",
+            "shell script",
         ],
     },
     "T1055": {
         "name": "Process Injection",
         "keywords": [
-            "process injection", "dll injection", "code injection",
-            "shellcode injection", "reflective loading",
+            "process injection",
+            "dll injection",
+            "code injection",
+            "shellcode injection",
+            "reflective loading",
         ],
     },
     "T1053": {
         "name": "Scheduled Task/Job",
         "keywords": [
-            "scheduled task", "cron job", "at job", "schtasks",
-            "task scheduler", "systemd timer",
+            "scheduled task",
+            "cron job",
+            "at job",
+            "schtasks",
+            "task scheduler",
+            "systemd timer",
         ],
     },
     "T1547": {
         "name": "Boot or Logon Autostart Execution",
         "keywords": [
-            "registry run key", "startup folder", "autostart", "persistence",
+            "registry run key",
+            "startup folder",
+            "autostart",
+            "persistence",
             "boot execute",
         ],
     },
     "T1486": {
         "name": "Data Encrypted for Impact",
         "keywords": [
-            "ransomware", "encrypted files", "file encryption",
-            "ransom note", "crypto locker", "locked files",
+            "ransomware",
+            "encrypted files",
+            "file encryption",
+            "ransom note",
+            "crypto locker",
+            "locked files",
         ],
     },
     "T1041": {
         "name": "Exfiltration Over C2 Channel",
         "keywords": [
-            "data exfiltration", "exfil", "data leak", "outbound transfer",
-            "exfiltration over c2", "large upload",
+            "data exfiltration",
+            "exfil",
+            "data leak",
+            "outbound transfer",
+            "exfiltration over c2",
+            "large upload",
         ],
     },
     "T1071": {
         "name": "Application Layer Protocol",
         "keywords": [
-            "c2", "c&c", "command and control", "beacon", "cobalt strike",
-            "metasploit", "reverse shell",
+            "c2",
+            "c&c",
+            "command and control",
+            "beacon",
+            "cobalt strike",
+            "metasploit",
+            "reverse shell",
         ],
     },
     "T1566": {
         "name": "Phishing",
         "keywords": [
-            "phishing", "spearphishing", "malicious attachment",
-            "malicious link", "suspicious email", "spoofed email",
+            "phishing",
+            "spearphishing",
+            "malicious attachment",
+            "malicious link",
+            "suspicious email",
+            "spoofed email",
         ],
     },
     "T1190": {
         "name": "Exploit Public-Facing Application",
         "keywords": [
-            "exploit", "cve-", "sql injection", "sqli", "rce",
-            "remote code execution", "path traversal", "lfi", "rfi",
+            "exploit",
+            "cve-",
+            "sql injection",
+            "sqli",
+            "rce",
+            "remote code execution",
+            "path traversal",
+            "lfi",
+            "rfi",
         ],
     },
     "T1046": {
         "name": "Network Service Scanning",
         "keywords": [
-            "port scan", "network scan", "nmap", "service scan",
-            "port scanning", "reconnaissance",
+            "port scan",
+            "network scan",
+            "nmap",
+            "service scan",
+            "port scanning",
+            "reconnaissance",
         ],
     },
     "T1498": {
         "name": "Network Denial of Service",
         "keywords": [
-            "ddos", "dos attack", "denial of service", "flood",
-            "syn flood", "udp flood", "amplification",
+            "ddos",
+            "dos attack",
+            "denial of service",
+            "flood",
+            "syn flood",
+            "udp flood",
+            "amplification",
         ],
     },
     "T1021": {
         "name": "Remote Services",
         "keywords": [
-            "rdp", "ssh login", "smb login", "winrm", "remote desktop",
-            "vnc", "remote service",
+            "rdp",
+            "ssh login",
+            "smb login",
+            "winrm",
+            "remote desktop",
+            "vnc",
+            "remote service",
         ],
     },
     "T1003": {
         "name": "OS Credential Dumping",
         "keywords": [
-            "mimikatz", "lsass dump", "credential dump", "sam dump",
-            "ntds.dit", "secretsdump", "hash dump",
+            "mimikatz",
+            "lsass dump",
+            "credential dump",
+            "sam dump",
+            "ntds.dit",
+            "secretsdump",
+            "hash dump",
         ],
     },
     "T1105": {
         "name": "Ingress Tool Transfer",
         "keywords": [
-            "file download", "ingress transfer", "wget", "curl download",
-            "download from internet", "tool transfer",
+            "file download",
+            "ingress transfer",
+            "wget",
+            "curl download",
+            "download from internet",
+            "tool transfer",
         ],
     },
 }
@@ -192,5 +266,9 @@ def get_technique_info(technique_id: str) -> Dict:
     """
     meta = TECHNIQUE_CATALOG.get(technique_id.upper())
     if meta:
-        return {"id": technique_id.upper(), "name": meta["name"], "keywords": meta["keywords"]}
+        return {
+            "id": technique_id.upper(),
+            "name": meta["name"],
+            "keywords": meta["keywords"],
+        }
     return {"id": technique_id.upper(), "name": "Unknown", "keywords": []}

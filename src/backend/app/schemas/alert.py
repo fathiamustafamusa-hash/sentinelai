@@ -1,6 +1,7 @@
 """
 Alert Pydantic schemas.
 """
+
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, List, Dict, Any
 from datetime import datetime
@@ -25,6 +26,7 @@ class AlertStatus(str, Enum):
 
 class AlertCreate(BaseModel):
     """Schema for creating a new alert."""
+
     title: str = Field(..., min_length=3, max_length=255)
     description: Optional[str] = None
     severity: AlertSeverity = AlertSeverity.MEDIUM
@@ -37,6 +39,7 @@ class AlertCreate(BaseModel):
 
 class AlertUpdate(BaseModel):
     """Schema for updating an alert."""
+
     title: Optional[str] = Field(None, min_length=3, max_length=255)
     description: Optional[str] = None
     severity: Optional[AlertSeverity] = None
@@ -46,6 +49,7 @@ class AlertUpdate(BaseModel):
 
 class AlertResponse(BaseModel):
     """Schema for alert data returned to clients."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: int

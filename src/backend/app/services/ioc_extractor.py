@@ -11,6 +11,7 @@ Extracts common indicators from free-form text using regex:
 - Windows file paths
 - Registry keys
 """
+
 import re
 from typing import Dict, List
 
@@ -35,9 +36,7 @@ _MD5_PATTERN = re.compile(r"\b[a-fA-F0-9]{32}\b")
 _SHA1_PATTERN = re.compile(r"\b[a-fA-F0-9]{40}\b")
 _SHA256_PATTERN = re.compile(r"\b[a-fA-F0-9]{64}\b")
 
-_EMAIL_PATTERN = re.compile(
-    r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b"
-)
+_EMAIL_PATTERN = re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b")
 
 _CVE_PATTERN = re.compile(r"\bCVE-\d{4}-\d{4,7}\b", re.IGNORECASE)
 
@@ -152,6 +151,8 @@ def flatten_iocs(iocs: Dict[str, List[str]]) -> List[Dict[str, str]]:
     return result
 
 
-def extract_flat_iocs(text: str, include_private_ips: bool = True) -> List[Dict[str, str]]:
+def extract_flat_iocs(
+    text: str, include_private_ips: bool = True
+) -> List[Dict[str, str]]:
     """Convenience: extract + flatten in one call."""
     return flatten_iocs(extract_iocs(text, include_private_ips))
