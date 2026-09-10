@@ -1,7 +1,7 @@
 """
 User model for authentication and authorization.
 """
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
 import enum
 
