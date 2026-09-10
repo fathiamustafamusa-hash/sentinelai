@@ -202,3 +202,43 @@ def delete_alert(
             detail=f"Alert {alert_id} not found",
         )
     return None
+
+
+# ============================================================
+# AI Analysis (async task via Celery)
+# ============================================================
+@router.post(
+    "/{alert_id}/analyze",
+    status_code=status.HTTP_202_ACCEPTED,
+    summary="Queue AI analysis for an alert",
+)
+def analyze_alert(
+    alert_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role(
+        UserRole.ADMIN.value, UserRole.ANALYST.value
+    )),
+):
+    """
+    Queue an AI analysis task for the given alert.
+
+    Returns 202 Accepted with the Celery task ID so the client can poll
+    for the result via GET /api/tasks/{task_id}.
+    """
+    # Verify alert exists before queuing
+    alert = alert_service.get_alert(db, alert_id)
+    if not alert:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Alert {alert_id} not found",
+        )
+
+    # Import here to avoid circular imports
+    from app.tasks.alert_tasks import analyze_alert_ai
+    task = analyze_alert_ai.delay(alert_id)
+
+    return {
+        "task_id": task.id,
+        "status": "queued",
+        "alert_id": alert_id,
+    }

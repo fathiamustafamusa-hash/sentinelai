@@ -15,7 +15,7 @@ from app.database import async_engine, sync_engine, Base
 from app import models  # noqa: F401
 
 # Import routers
-from app.routers import auth, alerts
+from app.routers import auth, alerts, tasks
 
 
 # ============ Redis client ============
@@ -70,6 +70,7 @@ app = FastAPI(
 # ============ Include Routers ============
 app.include_router(auth.router)
 app.include_router(alerts.router)
+app.include_router(tasks.router)
 
 
 # ============ Health Check ============

@@ -49,6 +49,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy application code
 COPY --chown=appuser:appgroup ./app ./app
 COPY --chown=appuser:appgroup ./run.py ./
+COPY --chown=appuser:appgroup ./celery_app.py ./
 
 # Switch to non-root user
 USER appuser
