@@ -11,14 +11,14 @@ from redis import asyncio as aioredis
 from app.config import settings
 from app.database import async_engine, sync_engine, Base
 
-# Import models so they are registered with Base.metadata
+# Register models with Base.metadata
 from app import models  # noqa: F401
 
 # Import routers
-from app.routers import auth
+from app.routers import auth, alerts
 
 
-# ============ Redis client (module-level, initialized in lifespan) ============
+# ============ Redis client ============
 redis_client: aioredis.Redis = None
 
 
@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     # ---- Startup ----
     print("🚀 Starting SentinelAI SOC API...")
 
-    # 1. Connect to Redis
+    # 1. Redis
     redis_client = aioredis.from_url(
         settings.redis_url,
         encoding="utf-8",
@@ -39,12 +39,12 @@ async def lifespan(app: FastAPI):
     await redis_client.ping()
     print("✅ Redis connected successfully")
 
-    # 2. Verify PostgreSQL
+    # 2. PostgreSQL
     async with async_engine.connect() as conn:
         await conn.execute(text("SELECT 1"))
     print("✅ PostgreSQL connected successfully")
 
-    # 3. Create tables (idempotent)
+    # 3. Create tables
     Base.metadata.create_all(bind=sync_engine)
     print("✅ Database tables created/verified")
 
@@ -69,6 +69,7 @@ app = FastAPI(
 
 # ============ Include Routers ============
 app.include_router(auth.router)
+app.include_router(alerts.router)
 
 
 # ============ Health Check ============
