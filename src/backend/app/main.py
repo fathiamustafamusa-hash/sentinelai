@@ -9,7 +9,13 @@ from sqlalchemy import text
 from redis import asyncio as aioredis
 
 from app.config import settings
-from app.database import async_engine
+from app.database import async_engine, sync_engine, Base
+
+# Import models so they are registered with Base.metadata
+from app import models  # noqa: F401
+
+# Import routers
+from app.routers import auth
 
 
 # ============ Redis client (module-level, initialized in lifespan) ============
@@ -18,35 +24,29 @@ redis_client: aioredis.Redis = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Application lifespan: initialize connections on startup, cleanup on shutdown.
-    """
+    """Application lifespan: init connections, create tables, cleanup."""
     global redis_client
 
     # ---- Startup ----
     print("🚀 Starting SentinelAI SOC API...")
 
     # 1. Connect to Redis
-    try:
-        redis_client = aioredis.from_url(
-            settings.redis_url,
-            encoding="utf-8",
-            decode_responses=True,
-        )
-        await redis_client.ping()
-        print("✅ Redis connected successfully")
-    except Exception as e:
-        print(f"❌ Redis connection failed: {e}")
-        raise
+    redis_client = aioredis.from_url(
+        settings.redis_url,
+        encoding="utf-8",
+        decode_responses=True,
+    )
+    await redis_client.ping()
+    print("✅ Redis connected successfully")
 
     # 2. Verify PostgreSQL
-    try:
-        async with async_engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
-        print("✅ PostgreSQL connected successfully")
-    except Exception as e:
-        print(f"❌ PostgreSQL connection failed: {e}")
-        raise
+    async with async_engine.connect() as conn:
+        await conn.execute(text("SELECT 1"))
+    print("✅ PostgreSQL connected successfully")
+
+    # 3. Create tables (idempotent)
+    Base.metadata.create_all(bind=sync_engine)
+    print("✅ Database tables created/verified")
 
     print("✅ Application startup complete")
 
@@ -67,15 +67,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ============ Include Routers ============
+app.include_router(auth.router)
 
-# ============ Health Check Endpoint ============
+
+# ============ Health Check ============
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health"])
 async def health_check():
-    """
-    Health check that verifies connectivity to PostgreSQL and Redis.
-    Returns 200 if all services are up, 503 otherwise.
-    """
-    # Check PostgreSQL
+    """Health check verifying PostgreSQL and Redis connectivity."""
     try:
         async with async_engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
@@ -83,7 +82,6 @@ async def health_check():
     except Exception as e:
         db_status = f"down: {type(e).__name__}"
 
-    # Check Redis
     try:
         await redis_client.ping()
         redis_status = "up"
@@ -107,10 +105,8 @@ async def health_check():
     )
 
 
-# ============ Root Endpoint ============
 @app.get("/", tags=["Root"])
 async def root():
-    """Root endpoint with API information."""
     return {
         "message": f"Welcome to {settings.APP_NAME}",
         "version": settings.APP_VERSION,
