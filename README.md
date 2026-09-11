@@ -154,3 +154,43 @@ MIT — see LICENSE file.
 ## 👤 Author
 
 Mustafa Musa — [@fathiamustafamusa-hash](https://github.com/fathiamustafamusa-hash)
+
+---
+
+## 🏛️ Architecture
+
+SentinelAI follows a layered architecture designed for **scalability**, **security**, and **async processing**:
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Sources   │────▶│   FastAPI   │────▶│  PostgreSQL │
+│ Wazuh,IDS.. │     │   Backend   │     │   Storage   │
+└─────────────┘     └──────┬──────┘     └─────────────┘
+                           │
+                           ▼
+                    ┌─────────────┐
+                    │    Redis    │
+                    │  Task Queue │
+                    └──────┬──────┘
+                           │
+                           ▼
+                    ┌─────────────┐
+                    │   Celery    │
+                    │   Worker    │
+                    └─────────────┘
+```
+
+### 📐 Architecture Diagrams
+
+- [**Overview**](docs/architecture/overview.md) — Component & layer diagram
+- [**Data Flow**](docs/architecture/data-flow.md) — Alert lifecycle & async pipeline
+- [**Auth Flow**](docs/architecture/auth-flow.md) — JWT & RBAC sequence
+- [**Database**](docs/architecture/database.md) — ER diagram & indexes
+
+### 🎯 Design Principles
+
+- **Async-first**: Celery + Redis for long-running AI analysis
+- **Stateless auth**: JWT tokens, no session store needed
+- **Layered security**: Bandit SAST + pip-audit + Trivy in CI
+- **Type-safe**: mypy + Pydantic v2 throughout
+- **Observable**: structured logging + coverage reporting
