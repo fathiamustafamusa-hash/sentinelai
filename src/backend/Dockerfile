@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1: Builder - install dependencies
 # ============================================================
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ RUN poetry config virtualenvs.create false \
 # ============================================================
 # Stage 2: Runtime - minimal production image
 # ============================================================
-FROM python:3.11-slim AS runtime
+FROM python:3.14-slim AS runtime
 
 # Install runtime dependencies only (psycopg2 needs libpq)
 RUN apt-get update && apt-get install -y --no-install-recommends \
