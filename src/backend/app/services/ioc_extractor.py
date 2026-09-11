@@ -13,8 +13,6 @@ Extracts common indicators from free-form text using regex:
 """
 
 import re
-from typing import Dict, List
-
 
 # ============ Regex patterns ============
 _IPV4_PATTERN = re.compile(
@@ -40,9 +38,7 @@ _EMAIL_PATTERN = re.compile(r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b
 
 _CVE_PATTERN = re.compile(r"\bCVE-\d{4}-\d{4,7}\b", re.IGNORECASE)
 
-_WINDOWS_PATH_PATTERN = re.compile(
-    r"\b[A-Za-z]:\\(?:[^\\\/:*?\"<>|\r\n]+\\)*[^\\\/:*?\"<>|\r\n]*"
-)
+_WINDOWS_PATH_PATTERN = re.compile(r"\b[A-Za-z]:\\(?:[^\\\/:*?\"<>|\r\n]+\\)*[^\\\/:*?\"<>|\r\n]*")
 
 _REGISTRY_KEY_PATTERN = re.compile(
     r"\b(?:HKLM|HKCU|HKCR|HKU|HKCC)\\[^\s]+",
@@ -59,12 +55,10 @@ def _is_private_ip(ip: str) -> bool:
     """Check if an IPv4 is private/reserved."""
     if ip.startswith(_PRIVATE_IP_PREFIXES):
         return True
-    if _PRIVATE_IP_172.match(ip):
-        return True
-    return False
+    return bool(_PRIVATE_IP_172.match(ip))
 
 
-def extract_iocs(text: str, include_private_ips: bool = True) -> Dict[str, List[str]]:
+def extract_iocs(text: str, include_private_ips: bool = True) -> dict[str, list[str]]:
     """
     Extract all IOCs from a text.
 
@@ -138,21 +132,19 @@ def extract_iocs(text: str, include_private_ips: bool = True) -> Dict[str, List[
     }
 
 
-def flatten_iocs(iocs: Dict[str, List[str]]) -> List[Dict[str, str]]:
+def flatten_iocs(iocs: dict[str, list[str]]) -> list[dict[str, str]]:
     """
     Convert the IOC dict to a flat list of {type, value} objects.
 
     Used for storage in Alert.iocs (JSONB).
     """
-    result: List[Dict[str, str]] = []
+    result: list[dict[str, str]] = []
     for ioc_type, values in iocs.items():
         for value in values:
             result.append({"type": ioc_type.rstrip("s"), "value": value})
     return result
 
 
-def extract_flat_iocs(
-    text: str, include_private_ips: bool = True
-) -> List[Dict[str, str]]:
+def extract_flat_iocs(text: str, include_private_ips: bool = True) -> list[dict[str, str]]:
     """Convenience: extract + flatten in one call."""
     return flatten_iocs(extract_iocs(text, include_private_ips))

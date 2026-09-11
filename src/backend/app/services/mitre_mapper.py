@@ -7,12 +7,9 @@ techniques. Uses a keyword-based approach for simplicity and auditability.
 Reference: https://attack.mitre.org/techniques/enterprise/
 """
 
-from typing import Dict, List, Set
-
-
 # ============ Technique catalog ============
 # Each entry: technique_id -> {name, keywords}
-TECHNIQUE_CATALOG: Dict[str, Dict] = {
+TECHNIQUE_CATALOG: dict[str, dict] = {
     "T1110": {
         "name": "Brute Force",
         "keywords": [
@@ -203,7 +200,7 @@ TECHNIQUE_CATALOG: Dict[str, Dict] = {
 
 
 # ============ Source-based hints ============
-SOURCE_HINTS: Dict[str, List[str]] = {
+SOURCE_HINTS: dict[str, list[str]] = {
     "wazuh": ["T1078", "T1059", "T1110"],
     "suricata": ["T1071", "T1046", "T1498"],
     "zeek": ["T1071", "T1046"],
@@ -223,7 +220,7 @@ def map_to_mitre(
     description: str = "",
     source: str = "",
     raw_data: str = "",
-) -> List[str]:
+) -> list[str]:
     """
     Map alert characteristics to MITRE ATT&CK technique IDs.
 
@@ -233,7 +230,7 @@ def map_to_mitre(
     technique, that technique is considered "matched". Additionally,
     source-specific hints are added (e.g., Wazuh alerts hint at T1078).
     """
-    techniques: Set[str] = set()
+    techniques: set[str] = set()
 
     # Combine all text fields for keyword matching
     combined = _normalize(" ".join([title or "", description or "", raw_data or ""]))
@@ -256,7 +253,7 @@ def map_to_mitre(
     return sorted(techniques)
 
 
-def get_technique_info(technique_id: str) -> Dict:
+def get_technique_info(technique_id: str) -> dict:
     """
     Get metadata for a technique ID.
 

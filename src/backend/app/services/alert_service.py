@@ -2,9 +2,10 @@
 Alert service: business logic for CRUD, filtering, and statistics.
 """
 
-from typing import Optional, List
+from datetime import UTC
+
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
 
 from app.models import Alert, User
 from app.schemas import AlertCreate, AlertUpdate
@@ -30,7 +31,7 @@ def create_alert(db: Session, alert_data: AlertCreate) -> Alert:
     return db_alert
 
 
-def get_alert(db: Session, alert_id: int) -> Optional[Alert]:
+def get_alert(db: Session, alert_id: int) -> Alert | None:
     """Get a single alert by ID."""
     return db.query(Alert).filter(Alert.id == alert_id).first()
 
@@ -39,11 +40,11 @@ def list_alerts(
     db: Session,
     skip: int = 0,
     limit: int = 100,
-    severity: Optional[str] = None,
-    status: Optional[str] = None,
-    source: Optional[str] = None,
-    assigned_to: Optional[int] = None,
-) -> List[Alert]:
+    severity: str | None = None,
+    status: str | None = None,
+    source: str | None = None,
+    assigned_to: int | None = None,
+) -> list[Alert]:
     """
     List alerts with optional filters and pagination.
     Results ordered by created_at DESC (newest first).
@@ -64,8 +65,8 @@ def list_alerts(
 
 def count_alerts(
     db: Session,
-    severity: Optional[str] = None,
-    status: Optional[str] = None,
+    severity: str | None = None,
+    status: str | None = None,
 ) -> int:
     """Count alerts with optional filters."""
     query = db.query(func.count(Alert.id))
@@ -76,9 +77,7 @@ def count_alerts(
     return query.scalar() or 0
 
 
-def update_alert(
-    db: Session, alert_id: int, alert_data: AlertUpdate
-) -> Optional[Alert]:
+def update_alert(db: Session, alert_id: int, alert_data: AlertUpdate) -> Alert | None:
     """Update an alert. Only modifies fields that are explicitly provided."""
     db_alert = get_alert(db, alert_id)
     if not db_alert:
@@ -97,9 +96,9 @@ def update_alert(
 
     # Auto-set resolved_at when status becomes resolved
     if update_data.get("status") == "resolved":
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        db_alert.resolved_at = datetime.now(timezone.utc)
+        db_alert.resolved_at = datetime.now(UTC)
 
     db.commit()
     db.refresh(db_alert)
@@ -116,7 +115,7 @@ def delete_alert(db: Session, alert_id: int) -> bool:
     return True
 
 
-def assign_alert(db: Session, alert_id: int, user_id: int) -> Optional[Alert]:
+def assign_alert(db: Session, alert_id: int, user_id: int) -> Alert | None:
     """Assign an alert to a user."""
     db_alert = get_alert(db, alert_id)
     if not db_alert:
@@ -145,15 +144,11 @@ def get_stats(db: Session) -> dict:
     total = db.query(func.count(Alert.id)).scalar() or 0
 
     # By severity
-    severity_rows = (
-        db.query(Alert.severity, func.count(Alert.id)).group_by(Alert.severity).all()
-    )
+    severity_rows = db.query(Alert.severity, func.count(Alert.id)).group_by(Alert.severity).all()
     by_severity = {row[0]: row[1] for row in severity_rows}
 
     # By status
-    status_rows = (
-        db.query(Alert.status, func.count(Alert.id)).group_by(Alert.status).all()
-    )
+    status_rows = db.query(Alert.status, func.count(Alert.id)).group_by(Alert.status).all()
     by_status = {row[0]: row[1] for row in status_rows}
 
     # By source (top sources)
@@ -167,9 +162,7 @@ def get_stats(db: Session) -> dict:
     by_source = {row[0]: row[1] for row in source_rows}
 
     # Unassigned count
-    unassigned = (
-        db.query(func.count(Alert.id)).filter(Alert.assigned_to.is_(None)).scalar() or 0
-    )
+    unassigned = db.query(func.count(Alert.id)).filter(Alert.assigned_to.is_(None)).scalar() or 0
 
     return {
         "total": total,

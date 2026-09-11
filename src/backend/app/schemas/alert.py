@@ -2,10 +2,11 @@
 Alert Pydantic schemas.
 """
 
-from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AlertSeverity(str, Enum):
@@ -28,23 +29,23 @@ class AlertCreate(BaseModel):
     """Schema for creating a new alert."""
 
     title: str = Field(..., min_length=3, max_length=255)
-    description: Optional[str] = None
+    description: str | None = None
     severity: AlertSeverity = AlertSeverity.MEDIUM
     source: str = Field(..., max_length=50)
-    source_id: Optional[str] = Field(None, max_length=100)
-    raw_data: Optional[Dict[str, Any]] = None
-    mitre_techniques: Optional[List[str]] = None
-    iocs: Optional[List[Dict[str, Any]]] = None
+    source_id: str | None = Field(None, max_length=100)
+    raw_data: dict[str, Any] | None = None
+    mitre_techniques: list[str] | None = None
+    iocs: list[dict[str, Any]] | None = None
 
 
 class AlertUpdate(BaseModel):
     """Schema for updating an alert."""
 
-    title: Optional[str] = Field(None, min_length=3, max_length=255)
-    description: Optional[str] = None
-    severity: Optional[AlertSeverity] = None
-    status: Optional[AlertStatus] = None
-    assigned_to: Optional[int] = None
+    title: str | None = Field(None, min_length=3, max_length=255)
+    description: str | None = None
+    severity: AlertSeverity | None = None
+    status: AlertStatus | None = None
+    assigned_to: int | None = None
 
 
 class AlertResponse(BaseModel):
@@ -54,15 +55,15 @@ class AlertResponse(BaseModel):
 
     id: int
     title: str
-    description: Optional[str]
+    description: str | None
     severity: str
     status: str
     source: str
-    source_id: Optional[str]
-    raw_data: Optional[Dict[str, Any]]
-    mitre_techniques: Optional[List[str]]
-    iocs: Optional[List[Dict[str, Any]]]
-    assigned_to: Optional[int]
+    source_id: str | None
+    raw_data: dict[str, Any] | None
+    mitre_techniques: list[str] | None
+    iocs: list[dict[str, Any]] | None
+    assigned_to: int | None
     created_at: datetime
-    updated_at: Optional[datetime]
-    resolved_at: Optional[datetime]
+    updated_at: datetime | None
+    resolved_at: datetime | None

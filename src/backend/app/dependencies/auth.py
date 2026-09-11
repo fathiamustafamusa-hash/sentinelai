@@ -6,10 +6,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.models import User
 from app.database import sync_engine
+from app.models import User
 from app.utils.security import decode_access_token
-
 
 # OAuth2 scheme (tokenUrl is informational for /docs)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=True)

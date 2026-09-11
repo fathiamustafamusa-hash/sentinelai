@@ -5,7 +5,7 @@ PostgreSQL ENUM migration complexities. Validation happens at the
 Pydantic schema level.
 """
 
-from sqlalchemy import Column, Integer, String, Text, DateTime, JSON
+from sqlalchemy import JSON, Column, DateTime, Integer, String, Text
 from sqlalchemy.sql import func
 
 from app.database import Base

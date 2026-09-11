@@ -2,19 +2,19 @@
 Schemas package: export all schemas for easy import.
 """
 
+from app.schemas.alert import (
+    AlertCreate,
+    AlertResponse,
+    AlertSeverity,
+    AlertStatus,
+    AlertUpdate,
+)
 from app.schemas.user import (
+    Token,
+    TokenData,
     UserCreate,
     UserLogin,
     UserResponse,
-    Token,
-    TokenData,
-)
-from app.schemas.alert import (
-    AlertSeverity,
-    AlertStatus,
-    AlertCreate,
-    AlertUpdate,
-    AlertResponse,
 )
 
 __all__ = [

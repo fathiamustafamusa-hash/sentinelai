@@ -2,6 +2,6 @@
 Routers package.
 """
 
-from app.routers import auth, alerts, tasks
+from app.routers import alerts, auth, tasks
 
 __all__ = ["auth", "alerts", "tasks"]

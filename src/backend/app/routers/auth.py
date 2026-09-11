@@ -5,16 +5,16 @@ Authentication routes: register and login.
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.dependencies.auth import get_db, get_current_active_user
-from app.schemas import UserCreate, UserResponse, UserLogin, Token
-from app.services.auth_service import (
-    create_user,
-    authenticate_user,
-    create_user_token,
-    UserAlreadyExistsError,
-    InvalidCredentialsError,
-)
+from app.dependencies.auth import get_current_active_user, get_db
 from app.models import User
+from app.schemas import Token, UserCreate, UserLogin, UserResponse
+from app.services.auth_service import (
+    InvalidCredentialsError,
+    UserAlreadyExistsError,
+    authenticate_user,
+    create_user,
+    create_user_token,
+)
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -40,7 +40,7 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
-        )
+        ) from e
 
 
 @router.post(
@@ -60,7 +60,7 @@ def login_user(login_data: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e),
             headers={"WWW-Authenticate": "Bearer"},
-        )
+        ) from e
 
 
 @router.get(

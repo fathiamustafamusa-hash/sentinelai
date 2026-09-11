@@ -2,12 +2,11 @@
 Routes for querying Celery task results.
 """
 
+from celery.result import AsyncResult
 from fastapi import APIRouter, Depends
 
 from app.dependencies.auth import get_current_active_user
 from app.models import User
-from celery.result import AsyncResult
-
 from celery_app import celery_app
 
 router = APIRouter(prefix="/api/tasks", tags=["Tasks"])

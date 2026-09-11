@@ -2,12 +2,12 @@
 Authentication service: user registration and login.
 """
 
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from app.models import User, UserRole
-from app.schemas import UserCreate, UserLogin, Token
-from app.utils.security import get_password_hash, verify_password, create_access_token
+from app.schemas import Token, UserCreate, UserLogin
+from app.utils.security import create_access_token, get_password_hash, verify_password
 
 
 class AuthError(Exception):
@@ -24,9 +24,7 @@ class InvalidCredentialsError(AuthError):
     pass
 
 
-def create_user(
-    db: Session, user_data: UserCreate, role: str = UserRole.ANALYST.value
-) -> User:
+def create_user(db: Session, user_data: UserCreate, role: str = UserRole.ANALYST.value) -> User:
     """
     Create a new user.
     Raises UserAlreadyExistsError if username or email already exists.
@@ -53,9 +51,9 @@ def create_user(
         db.commit()
         db.refresh(db_user)
         return db_user
-    except IntegrityError:
+    except IntegrityError as e:
         db.rollback()
-        raise UserAlreadyExistsError("Username or email already registered")
+        raise UserAlreadyExistsError("Username or email already registered") from e
 
 
 def authenticate_user(db: Session, login_data: UserLogin) -> User:

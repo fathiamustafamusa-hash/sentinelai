@@ -4,16 +4,15 @@ Tasks are explicitly bound to `celery_app` (configured with Redis broker).
 """
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import sessionmaker
 
-from celery_app import celery_app
 from app.database import sync_engine
 from app.models import Alert
 from app.services.ioc_extractor import extract_flat_iocs, extract_iocs
-from app.services.mitre_mapper import map_to_mitre, get_technique_info
-
+from app.services.mitre_mapper import get_technique_info, map_to_mitre
+from celery_app import celery_app
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +81,7 @@ def _analyze_with_ai(alert: Alert) -> dict:
         "mitre_techniques_detailed": techniques_with_info,
         "risk_score": _compute_risk_score(alert, iocs_flat, detected_techniques),
         "model": "stub-v1-with-enrichment",
-        "analyzed_at": datetime.now(timezone.utc).isoformat(),
+        "analyzed_at": datetime.now(UTC).isoformat(),
     }
 
 
@@ -148,7 +147,7 @@ def analyze_alert_ai(self, alert_id: int) -> dict:
         }
     except Exception as exc:
         logger.exception(f"[analyze_alert_ai] Failed for alert {alert_id}")
-        raise self.retry(exc=exc)
+        raise self.retry(exc=exc) from exc
     finally:
         db.close()
 

@@ -4,25 +4,21 @@ SentinelAI SOC API - Main FastAPI application.
 
 from contextlib import asynccontextmanager
 
+# ============ Redis client ============
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
-from sqlalchemy import text
 from redis import asyncio as aioredis
-
-from app.config import settings
-from app.database import async_engine, sync_engine, Base
+from sqlalchemy import text
 
 # Register models with Base.metadata
 from app import models  # noqa: F401
+from app.config import settings
+from app.database import Base, async_engine, sync_engine
 
 # Import routers
-from app.routers import auth, alerts, tasks
+from app.routers import alerts, auth, tasks
 
-
-# ============ Redis client ============
-from typing import Optional
-
-redis_client: Optional[aioredis.Redis] = None
+redis_client: aioredis.Redis | None = None
 
 
 @asynccontextmanager
