@@ -169,7 +169,7 @@ jobs:
           docker build -t sentinelai-backend:scan -f src/backend/Dockerfile src/backend
 
       - name: Run Trivy (Docker image CVEs)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'sentinelai-backend:scan'
           format: 'table'
