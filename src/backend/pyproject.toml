@@ -141,3 +141,12 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
 ]
+
+# ============================================================
+# Bandit - Python Security Linter
+# ============================================================
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "__pycache__"]
+skips = [
+    "B101",  # assert_used (allowed in tests)
+]
