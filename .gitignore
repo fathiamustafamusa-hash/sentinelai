@@ -85,3 +85,6 @@ NOTES.md
 # Exceptions: keep example templates
 !.env.example
 !.env.prod.example
+
+# Backups
+*.bak
