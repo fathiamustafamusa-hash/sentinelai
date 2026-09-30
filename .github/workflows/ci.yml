@@ -40,7 +40,7 @@ jobs:
         run: poetry config virtualenvs.in-project true
 
       - name: Cache Poetry virtualenv
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: src/backend/.venv
           key: venv-${{ runner.os }}-${{ hashFiles('src/backend/pyproject.toml', 'src/backend/poetry.lock') }}
